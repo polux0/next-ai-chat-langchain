@@ -22,6 +22,12 @@ import { RunnableSequence } from "langchain/schema/runnable";
 
 export const runtime = 'edge'
 
+export const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
 // const runLLMChain = async (prompt) =>{
 
 // } 
@@ -34,111 +40,12 @@ const initPineconeClient = async () => {
   return pinecone;
 }
 
-const runLLMChain = async (messages: any) => {
-
-  const encoder = new TextEncoder();
-  const stream = new TransformStream();
-  const writer = stream.writable.getWriter();
-
-  interface Metadata {
-    text: string;
-    // Include other properties of metadata if any
-  }
-
-  interface Match {
-    metadata?: Metadata; 
-    // Assuming metadata can be optional, if not, remove the "?"
-    // Include other properties of match if any
-  }
-
-
-  const pineconeClient = await initPineconeClient();
-  const index = pineconeClient.Index(process.env.PINECONE_INDEX_NAME!);
-  // console.log('index', index);
-  // Embed the user's intent and query the Pinecone index
-
-  const embedder = new OpenAIEmbeddings({});
-
-  // const embeddings = await embedder.embedQuery(messages);
-  // console.log('messages: ', messages[messages.length - 1].content);
-  const embeddings = await embedder.embedQuery(messages[messages.length - 1].content);
-  // console.log('temperature check: ', embeddings);
-
-  const matches = await getMatchesFromEmbeddings(embeddings, pineconeClient, 5);
-  // console.log('/n, matches ( with additional metadata ): ', matches)
-
-  // console.log('matches: ', matches);
-  const extractedTexts: String[] = (matches as Match[])
-  .filter(match => match.metadata && match.metadata.text)
-  .map(match => match.metadata?.text!); 
-  // Using "!" here to tell TypeScript we're sure metadata exists.
-
-  // console.log('extractedTexts: ', extractedTexts);
-
-  let callbackManagerTest = CallbackManager.fromHandlers({
-    async handleLLMNewToken(token) {
-      await writer.ready;
-      await writer.write(encoder.encode(`${token}`));
-    },
-    async handleLLMEnd(result) {
-      await writer.ready;
-      await writer.close();
-    }
-  })
-
-  // working version
-  // const llm = new ChatOpenAI({
-  //   streaming: true,
-  //   verbose: true,
-  //   modelName: "gpt-3.5-turbo",
-  //   temperature: 0,
-  //   callbackManager: CallbackManager.fromHandlers({
-  //     async handleLLMNewToken(token) {
-  //       console.log(token);
-  //     },
-  //     async handleLLMEnd(result) {
-  //       // console.log('result: ', result);
-  //     }
-  //   }),
-  // });
-
-  
-  const llm = new ChatOpenAI({
-    streaming: true,
-    verbose: true,
-    modelName: "gpt-3.5-turbo",
-    temperature: 0,
-    callbackManager: callbackManagerTest
-  });
-
-  console.log('question: ', messages[messages.length - 1].content);
-  console.log('urls: ', extractedTexts);
-
-  const promptTemplate = new PromptTemplate({
-    template: templates.summarizerDocumentTemplate,
-    inputVariables: ["documents"],
-  });
-
-  const chain = new LLMChain({prompt: promptTemplate, llm});
-
-  const test = await chain.stream({
-    question: messages[messages.length - 1].content,
-    documents: extractedTexts
-  });
-
-  // Respond with the stream
-  return new StreamingTextResponse(test);
-  console.log('test: ', test);
-  return stream.readable;
-
-}
-
 export async function POST(req: Request) {
   const { messages } = await req.json()
 
-  const encoder = new TextEncoder();
-  const stream = new TransformStream();
-  const writer = stream.writable.getWriter();
+  // const encoder = new TextEncoder();
+  // const stream = new TransformStream();
+  // const writer = stream.writable.getWriter();
 
   interface Metadata {
     text: string;
@@ -177,12 +84,12 @@ export async function POST(req: Request) {
 
   let callbackManagerTest = CallbackManager.fromHandlers({
     async handleLLMNewToken(token) {
-      await writer.ready;
-      await writer.write(encoder.encode(`${token}`));
+      // await writer.ready;
+      // await writer.write(encoder.encode(`${token}`));
     },
     async handleLLMEnd(result) {
-      await writer.ready;
-      await writer.close();
+      // await writer.ready;
+      // await writer.close();
     }
   })
 
@@ -232,7 +139,11 @@ export async function POST(req: Request) {
   });
 
   // Respond with the stream
-  return new StreamingTextResponse(test);
+  // return new StreamingTextResponse(test);
+
+  return new StreamingTextResponse(test, {
+    headers: corsHeaders
+  })
 
   // const stream = runLLMChain(messages);
   // return new Response(await stream);

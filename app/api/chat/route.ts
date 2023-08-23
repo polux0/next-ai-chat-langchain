@@ -139,11 +139,11 @@ export async function POST(req: Request) {
   });
 
   // Respond with the stream
-  // return new StreamingTextResponse(test);
+  return new StreamingTextResponse(test);
 
-  return new StreamingTextResponse(test, {
-    headers: corsHeaders
-  })
+  // return new StreamingTextResponse(stream, {
+  //   headers: { 'X-RATE-LIMIT': 'lol' }
+  // })
 
   // const stream = runLLMChain(messages);
   // return new Response(await stream);

@@ -5,9 +5,6 @@ import React, { useState } from 'react';
 import { Sidebar } from 'primereact/sidebar';
 import { Button } from 'primereact/button';
 import 'primeicons/primeicons.css';
-import { TiTimesOutline } from 'react-icons/ti'; // Import the icon component
-
-
 
 async function callChatAPI(inputContent: any) {
   try {
@@ -40,24 +37,7 @@ const customStyles = `
   z-index: 1000;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
 }
-
-/* Style the close icon */
-.custom-close-icon {
-
-}
-
 `;
-
-// const customIcons = (
-//   <React.Fragment>
-//       <button className="p-sidebar-icon p-link mr-2">
-//           <span className="pi pi-print" />
-//       </button>
-//       <button className="p-sidebar-icon p-link mr-2">
-//           <span className="pi pi-search" />
-//       </button>
-//   </React.Fragment>
-// );
 
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit } = useChat();
@@ -66,7 +46,11 @@ export default function Chat() {
   return (
 
     <div>
-      <Sidebar visible={visible} onHide={() => setVisible(false)} style={{ backgroundColor: '#f0f0f0' }} className="sm:w-1/4 w-full custom-sidebar" 
+      <Sidebar 
+        visible={visible} 
+        onHide={() => setVisible(false)} 
+        style={{ backgroundColor: '#f0f0f0' }} 
+        className="sm:w-1/4 w-full custom-sidebar" 
         showCloseIcon={false} >
 
         <div className="custom-close-icon" onClick={() => setVisible(false)}>
@@ -74,8 +58,8 @@ export default function Chat() {
         </div>
         
         <div className="px-4 py-4">
-          <h2 className="text-2xl font-semibold py-6 text-center">Collaborative Finance Chatbot</h2>
 
+          <h2 className="text-2xl font-semibold py-6 text-center">Collaborative Finance Chatbot</h2>
           <h3 className="text-md font-semibold">About</h3>
 
           <div className="text-md pt-5 ">This app is an LLM-powered chatbot built using:</div>
@@ -119,19 +103,16 @@ export default function Chat() {
             </div>
           ))
         : null}
-
-
       
       <form onSubmit={handleSubmit}>
         <div className="flex justify-center">
-
           <input
-            className="fixed w-5/6  max-w-2xl bottom-0 border border-gray-300 rounded mb-8 shadow-xl p-2"
+            className="fixed w-5/6 max-w-2xl bottom-0 border border-gray-300 rounded mb-8 shadow-xl p-2"
             value={input}
             placeholder="Say something..."
             onChange={handleInputChange}
           />
-          </div>
+        </div>
       </form>
     </div>
     </div>

@@ -73,7 +73,7 @@ export async function POST(req: Request) {
   const embeddings = await embedder.embedQuery(messages[messages.length - 1].content);
   // console.log('temperature check: ', embeddings);
 
-  const matches = await getMatchesFromEmbeddings(embeddings, pineconeClient, 3);
+  const matches = await getMatchesFromEmbeddings(embeddings, pineconeClient, 4);
   console.log('/n, matches ( with additional metadata ): ', matches)
 
   // console.log('matches: ', matches);
@@ -145,11 +145,13 @@ export async function POST(req: Request) {
   // Offers insights into the significance or implications of the combined findings.
   // Try to achieve everything without repetition`);
 
-  const prompt = PromptTemplate.fromTemplate(`
-  You are tasked with summarizing multiple documents{documents}.
-  Synthesize overarching themes and findings.
-  Point out any contrasting or unique perspectives.
-  Discuss the collective implications of these documents.`)
+  // const prompt = PromptTemplate.fromTemplate(`
+  // You are tasked with combining multiple documents{documents}.
+  // Any code found in the documents should ALWAYS be preserved in the summary, unchanged
+  // Try to summarize overarching themes and findings, but DO NOT make examples of your own.
+  // Optionally discuss the collective implications of these documents.`)
+
+  const prompt = PromptTemplate.fromTemplate(templates.summarizerDocumentTemplate)
 
   // const prompt = PromptTemplate.fromTemplate(templates.summarizerDocumentTemplate)
   const outputParser = new BytesOutputParser()
@@ -162,16 +164,7 @@ export async function POST(req: Request) {
     documents: extractedTexts
   });
 
-  const iterableStream = createIterableReadableStreamFromText();
-
-  console.log("messages[messages.length - 1].content", messages[messages.length - 1].content);
-  // governance: 
-  if(messages[messages.length - 1].content.includes("collaborative finance")){
-    return new StreamingTextResponse(iterableStream);  
-  }
-  else{
-    return new StreamingTextResponse(test);
-  }
+  return new StreamingTextResponse(test);
 
   // return new StreamingTextResponse(stream, {
   //   headers: { 'X-RATE-LIMIT': 'lol' }

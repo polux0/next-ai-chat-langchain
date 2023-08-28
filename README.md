@@ -41,4 +41,3 @@ To learn more about LangChain, OpenAI, Next.js, and the Vercel AI SDK take a loo
 - [LangChain Documentation](https://js.langchain.com/docs) - learn about LangChain
 - [OpenAI Documentation](https://platform.openai.com/docs) - learn about OpenAI features and API.
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-x

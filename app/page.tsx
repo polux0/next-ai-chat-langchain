@@ -75,7 +75,7 @@ export default function Chat() {
 
           <hr className="h-px my-8 bg-gray-300 border-0"></hr>
 
-          <p className="text-md pb-2">Made with ❤️ by 
+          <p className="text-md pb-2">Made with love by 
             <a className="text-blue-500 underline px-1" href="https://t.me/jesseforyou" target="_blank">Jesse</a> 
           &
             <a className="text-blue-500 underline px-1" href="https://t.me/alexusnavas" target="_blank">Aleksa</a>

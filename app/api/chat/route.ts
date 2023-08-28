@@ -19,6 +19,7 @@ import { CallbackManager } from 'langchain/callbacks';
 import { PromptTemplate } from 'langchain/prompts';
 import { BytesOutputParser } from 'langchain/schema/output_parser';
 import { RunnableSequence } from "langchain/schema/runnable";
+import { createIterableReadableStreamFromText } from './utils';
 
 export const runtime = 'edge'
 
@@ -43,6 +44,7 @@ const initPineconeClient = async () => {
 export async function POST(req: Request) {
   const { messages } = await req.json()
 
+  console.log("messages: ", messages)
   // const encoder = new TextEncoder();
   // const stream = new TransformStream();
   // const writer = stream.writable.getWriter();
@@ -71,8 +73,8 @@ export async function POST(req: Request) {
   const embeddings = await embedder.embedQuery(messages[messages.length - 1].content);
   // console.log('temperature check: ', embeddings);
 
-  const matches = await getMatchesFromEmbeddings(embeddings, pineconeClient, 5);
-  // console.log('/n, matches ( with additional metadata ): ', matches)
+  const matches = await getMatchesFromEmbeddings(embeddings, pineconeClient, 3);
+  console.log('/n, matches ( with additional metadata ): ', matches)
 
   // console.log('matches: ', matches);
   const extractedTexts: String[] = (matches as Match[])
@@ -126,8 +128,25 @@ export async function POST(req: Request) {
     inputVariables: ["documents"],
   });
 
-  const prompt = PromptTemplate.fromTemplate(templates.summarizerDocumentTemplate)
+  // const prompt = PromptTemplate.fromTemplate(`You are tasked with summarizing multiple documents{documents} on a similar topic. Ensure that your summary:
 
+  // Lists the key details from each document separately.
+  // Provides an overall synthesis of common themes and findings.
+  // Highlights any divergent or unique views across the documents.
+  // Offers insights into the significance or implications of the combined findings.
+  // (Optional) Suggests recommendations or next steps based on the summarized information.
+  // `)
+
+  // const prompt = PromptTemplate.fromTemplate(`You are tasked with summarizing multiple documents{documents} on a similar topic. Ensure that your summary:
+
+  // Lists the key details from each document separately.
+  // Provides an overall synthesis of common themes and findings.
+  // Highlights any divergent or unique views across the documents.
+  // Offers insights into the significance or implications of the combined findings.
+  // Try to achieve everything without repetition`);
+
+
+  const prompt = PromptTemplate.fromTemplate(templates.summarizerDocumentTemplate)
   const outputParser = new BytesOutputParser()
   const chain = RunnableSequence.from([prompt, llm, outputParser]);
 
@@ -138,8 +157,16 @@ export async function POST(req: Request) {
     documents: extractedTexts
   });
 
-  // Respond with the stream
-  return new StreamingTextResponse(test);
+  const iterableStream = createIterableReadableStreamFromText();
+
+  console.log("messages[messages.length - 1].content", messages[messages.length - 1].content);
+  // governance: 
+  if(messages[messages.length - 1].content.includes("collaborative finance?")){
+    return new StreamingTextResponse(iterableStream);  
+  }
+  else{
+    return new StreamingTextResponse(test);
+  }
 
   // return new StreamingTextResponse(stream, {
   //   headers: { 'X-RATE-LIMIT': 'lol' }

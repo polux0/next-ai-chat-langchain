@@ -90,19 +90,19 @@ export default function Chat() {
     
     <div className="mx-auto max-w-3xl py-24 flex flex-col space-y-8 px-4 md:px-0">
 
-      {messages.length > 0
-        ? messages.map((m, index) => (
-            <div
-              key={m.id}
-              className={`message ${m.role} 
-                                  ${ m.role === 'user' ? 'bg-blue-100' : 'bg-red-100'}
-                        `}
-            >
-              {m.role === 'user' ? 'User: ' : 'AI: '}
-              {m.content}
-            </div>
-          ))
-        : null}
+    {messages.length > 0
+  ? messages.map((m, index) => (
+      <div
+        key={m.id}
+        className={`message ${m.role} 
+                                ${ m.role === 'user' ? 'bg-indigo-50' : 'bg-indigo-100'}
+                      p-4`}
+      >
+        {m.role === 'user' ? 'User: ' : 'AI: '}
+        {m.content}
+      </div>
+    ))
+  : null}
       
       <form onSubmit={handleSubmit}>
         <div className="flex justify-center">

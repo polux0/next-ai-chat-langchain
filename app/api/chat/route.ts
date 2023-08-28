@@ -161,7 +161,7 @@ export async function POST(req: Request) {
 
   console.log("messages[messages.length - 1].content", messages[messages.length - 1].content);
   // governance: 
-  if(messages[messages.length - 1].content.includes("collaborative finance?")){
+  if(messages[messages.length - 1].content.includes("collaborative finance")){
     return new StreamingTextResponse(iterableStream);  
   }
   else{

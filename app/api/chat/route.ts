@@ -146,12 +146,10 @@ export async function POST(req: Request) {
   // Try to achieve everything without repetition`);
 
   const prompt = PromptTemplate.fromTemplate(`
-  You are tasked with summarizing multiple documents{documents} on a similar topic.
+  You are tasked with summarizing multiple documents{documents}.
   Synthesize overarching themes and findings.
   Point out any contrasting or unique perspectives.
-  Discuss the collective implications of these documents.
-  Optionally, recommend further actions or research based on your synthesis.`)
-
+  Discuss the collective implications of these documents.`)
 
   // const prompt = PromptTemplate.fromTemplate(templates.summarizerDocumentTemplate)
   const outputParser = new BytesOutputParser()

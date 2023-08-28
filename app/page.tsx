@@ -95,7 +95,7 @@ export default function Chat() {
       <div
         key={m.id}
         className={`message ${m.role} 
-                                ${ m.role === 'user' ? 'bg-indigo-50' : 'bg-indigo-100'}
+                                ${ m.role === 'user' ? 'bg-indigo-100' : 'bg-indigo-50'}
                       p-4`}
       >
         {m.role === 'user' ? 'User: ' : 'AI: '}

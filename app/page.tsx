@@ -5,39 +5,7 @@ import React, { useState } from 'react';
 import { Sidebar } from 'primereact/sidebar';
 import { Button } from 'primereact/button';
 import 'primeicons/primeicons.css';
-
-async function callChatAPI(inputContent: any) {
-  try {
-    const response = await fetch('/api/chat', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ content: inputContent })
-    });
-    
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
-  }
-}
-
-const customStyles = `
-.custom-sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 375px;
-  height: 100vh;
-  background-color: #f0f0f0;
-  z-index: 1000;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-}
-`;
+ 
 
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit } = useChat();
@@ -83,7 +51,6 @@ export default function Chat() {
           <p className="text-md pb-4">Deep gratitude to 
             <a className="text-blue-500 underline px-1" href="https://platform.openai.com/docs/models/gpt-3-5" target="_blank">The Commons Hub</a> 
             without whose support this would not have been possible! ❤️</p>
-            <style dangerouslySetInnerHTML={{ __html: customStyles }} />
         </div>
       </Sidebar>
       <Button icon="pi pi-angle-right" className="p-3" style={{ fontSize: '1.5rem' }} onClick={() => setVisible(true)}></Button>
@@ -98,7 +65,7 @@ export default function Chat() {
                                 ${ m.role === 'user' ? 'bg-indigo-100' : 'bg-indigo-50'}
                       p-4`}
       >
-        {m.role === 'user' ? 'User: ' : 'AI: '}
+        {m.role === 'user' ? '🤓: ' : '🤖: '}
         {m.content}
       </div>
     ))
@@ -109,7 +76,7 @@ export default function Chat() {
           <input
             className="fixed w-5/6 max-w-2xl bottom-0 border border-gray-300 rounded mb-8 shadow-xl p-2"
             value={input}
-            placeholder="Say something..."
+            placeholder="Send a message"
             onChange={handleInputChange}
           />
         </div>

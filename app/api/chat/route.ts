@@ -19,7 +19,6 @@ import { CallbackManager } from 'langchain/callbacks';
 import { PromptTemplate } from 'langchain/prompts';
 import { BytesOutputParser } from 'langchain/schema/output_parser';
 import { RunnableSequence } from "langchain/schema/runnable";
-import { createIterableReadableStreamFromText } from './utils';
 
 export const runtime = 'edge'
 
@@ -98,7 +97,7 @@ export async function POST(req: Request) {
   // working version
   // const llm = new ChatOpenAI({
   //   streaming: true,
-  //   verbose: true,
+  //   verbose: true, 
   //   modelName: "gpt-3.5-turbo",
   //   temperature: 0,
   //   callbackManager: CallbackManager.fromHandlers({
